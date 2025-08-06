@@ -1,0 +1,22 @@
+.parallax {
+  background-image: url("../../assets/parrall.jpg");
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.animated-texts h1 {
+  animation: fadeInDown 1s ease-in-out;
+}
+
+.animated-texts p,
+h1,
+h2 {
+  animation: fadeInUp 1s ease-in-out;
+}

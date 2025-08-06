@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM", "es6", "dom", "es2015", "es2017", "esnext.asynciterable"],
+    "moduleResolution": "Node",
+    "importHelpers": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "outDir": "./dist",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+  },
+  "include": ["**/*", "./src/schema/*.d.ts"],
+  "exclude": ["node_modules"]
+}
