@@ -1,6 +1,6 @@
 /* The header banner */
 .header-banner {
-  background-image: url("../../../assets/services-1.jpg");
+  background-image: url("../../../assets/image.png");
   background-size: cover;
   background-position: center;
   position: relative;
@@ -14,7 +14,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.714);
 }
 .overlay-content {
   position: absolute;
@@ -23,6 +23,18 @@
   transform: translate(-50%, -50%);
   color: #fff;
   justify-content: flex-start;
+}
+
+/* Make all text bigger */
+.overlay-content h1 {
+  font-size: 2rem; /* big main heading */
+  font-weight: bold;
+}
+
+.overlay-content h4,
+.overlay-content p,
+.overlay-content h2 {
+  font-size: 1.3rem; /* bigger subtext */
 }
 
 .animated {

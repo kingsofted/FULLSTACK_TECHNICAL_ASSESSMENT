@@ -24,3 +24,15 @@ export interface UpdateJobInput {
   requiredSkills: String
   details: String;
 }
+
+export interface JobFilterInput{ 
+  title: String
+  company: String
+  location: String
+  experienceLevel: String
+  salaryRange?: [number, number];
+  industry: String
+  requiredSkills: [String]
+  sortBy: String
+  sortOrder: String
+}

@@ -10,7 +10,7 @@ import SmallJobCard from '../JobCard/SmallJobCard';
 
 
 interface MansonryProps {
-  jobs: Job[];
+  jobs: Job[] | [];
 }
 
 const Mansonry: React.FC<MansonryProps> = ({ jobs }) => {

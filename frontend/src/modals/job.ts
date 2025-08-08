@@ -3,7 +3,7 @@ export interface Job {
   title: string;
   company: string;
   location: string;
-  experienceLevel: "Entry-Level" | "Mid-Level" | "Senior-Level";
+  experienceLevel: "Entry-Level" | "Mid-Level" | "Senior-Level" | "";
   salaryRange?: number;
   industry?: string;
   requiredSkills?: string;

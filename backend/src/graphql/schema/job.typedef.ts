@@ -16,6 +16,20 @@ type Job {
   updatedAt: String!
 }
 
+input JobFilterInput {
+  query: String
+  title: String
+  company: String
+  location: String
+  experienceLevel: String
+  salaryRange: [Float]
+  industry: String
+  requiredSkills: [String]
+  sortBy: String
+  sortOrder: String
+}
+
+
 input CreateJobInput {
   title: String!
   company: String!
@@ -39,7 +53,7 @@ input UpdateJobInput {
 }
 
 type Query {
-  getJobs: [Job!]!
+  getJobs(filter: JobFilterInput!): [Job!]!
   getJobById(id: ID!): Job
   searchJobs(query: String!): [Job!]!
   getSimilarJobs(jobId: ID!): [Job!]!

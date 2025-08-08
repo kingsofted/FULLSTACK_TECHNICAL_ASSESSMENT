@@ -5,14 +5,14 @@ import { jobElasticService, JobElasticService } from "../../utils/elasticSearch/
 import { EventListener } from "../../utils/events/EventListener";
 import { createJobSchema } from "../../validations/validateModel";
 import { jobRepository } from "./job.repository";
-import { CreateJobInput, UpdateJobInput } from "./job.types";
+import { CreateJobInput, JobFilterInput, UpdateJobInput } from "./job.types";
 
 export class JobService {
 
 
-  async getAllJobs(): Promise<Job[]> {
-    const jobs: Job[] = await jobRepository.find();
-    return jobs
+  async getAllJobs(filter: JobFilterInput): Promise<Job[]> {
+
+    return jobRepository.findByFilter(filter);
   }
 
   async getJobById(id: number): Promise<Job> {

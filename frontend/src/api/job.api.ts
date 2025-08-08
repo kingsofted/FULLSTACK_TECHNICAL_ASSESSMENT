@@ -1,8 +1,9 @@
 import { gql } from "@apollo/client";
 
+
 export const GET_JOBS = gql`
-  query GetJobs {
-    getJobs {
+  query GetJobs($filter: JobFilterInput!) {
+    getJobs(filter: $filter) {
       id
       title
       company
@@ -17,6 +18,7 @@ export const GET_JOBS = gql`
     }
   }
 `;
+
 
 export const GET_JOB = gql`
   query GetJob($id: ID!) {

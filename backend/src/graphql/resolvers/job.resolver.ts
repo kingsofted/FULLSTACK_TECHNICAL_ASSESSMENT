@@ -1,10 +1,10 @@
 import { jobService } from "../../modules/job/job.service";
-import { CreateJobInput, UpdateJobInput } from "../../modules/job/job.types";
+import { CreateJobInput, JobFilterInput, UpdateJobInput } from "../../modules/job/job.types";
 
 export const jobResolver = {
   Query: {
-    getJobs: async () => {
-      return jobService.getAllJobs();
+    getJobs: async (_:unknown, {filter}: {filter: JobFilterInput}) => {
+      return jobService.getAllJobs(filter);
     },
     getJobById: async (_: unknown, { id }: { id: number }) => {
       return jobService.getJobById(id);

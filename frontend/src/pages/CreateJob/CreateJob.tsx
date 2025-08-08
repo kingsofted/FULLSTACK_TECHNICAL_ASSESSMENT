@@ -15,6 +15,7 @@ import {
     Paper,
     MenuItem,
 } from '@mui/material';
+import { experienceLevels } from '../../constants/constant';
 
 const CreateJob: React.FC = () => {
     const navigate = useNavigate();
@@ -28,12 +29,6 @@ const CreateJob: React.FC = () => {
             setErrorMessage(createError.message);
         }
     }, [createError]);
-
-    const experienceLevels: Job["experienceLevel"][] = [
-        "Entry-Level",
-        "Mid-Level",
-        "Senior-Level",
-    ];
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
