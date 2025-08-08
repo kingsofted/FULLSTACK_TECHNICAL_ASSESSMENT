@@ -17,16 +17,21 @@ import {
   Button,
   Stack,
   Paper,
-  Typography
+  Typography,
+  Collapse,
+  IconButton
 } from '@mui/material'
 import Search from '../../components/Search/Search'
 import CustomButton from '../../components/common/Button/CustomButton'
 import { Job } from "../../modals/job";
 import { filterInitialState, FilterState } from '../../redux/initialState/filterInitialState'
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 
 
 const Home: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [open, setOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(filterInitialState);
 
   const { data, loading: searchLoading, error, refetch } = useQuery<{ getJobs: Job[] }>(GET_JOBS, {
@@ -79,11 +84,20 @@ const Home: React.FC = () => {
         <Search />
       </div>
 
-      <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
-        <Typography variant="h6" gutterBottom sx={{ fontWeight: 600 }}>
+         <Paper elevation={3} sx={{ p: 3, mb: 4, borderRadius: 2 }}>
+      {/* Header with toggle */}
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
+        <Typography variant="h6" sx={{ fontWeight: 600 }}>
           Filter Jobs
         </Typography>
-        <Grid container spacing={2}>
+        <IconButton onClick={() => setOpen(!open)}>
+          {open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+        </IconButton>
+      </Stack>
+
+      {/* Collapse wrapper */}
+      <Collapse in={open}>
+        <Grid container spacing={2} sx={{ mt: 1 }}>
           <Grid>
             <TextField
               fullWidth
@@ -113,7 +127,12 @@ const Home: React.FC = () => {
               <InputLabel>Experience</InputLabel>
               <Select
                 value={filters.experienceLevel}
-                onChange={(e) => handleFilterChange("experienceLevel", e.target.value as Job["experienceLevel"])}
+                onChange={(e) =>
+                  handleFilterChange(
+                    "experienceLevel",
+                    e.target.value as Job["experienceLevel"]
+                  )
+                }
               >
                 <MenuItem value="Entry-Level">Entry-Level</MenuItem>
                 <MenuItem value="Mid-Level">Mid-Level</MenuItem>
@@ -137,7 +156,7 @@ const Home: React.FC = () => {
               onChange={(e) => handleFilterChange("requiredSkills", e.target.value)}
             />
           </Grid>
-          <Grid >
+          <Grid>
             <Typography gutterBottom>Salary Range (Per Month)</Typography>
             <Slider
               value={filters.salaryRange || [0, 7000]}
@@ -146,7 +165,7 @@ const Home: React.FC = () => {
               }
               valueLabelDisplay="auto"
               min={0}
-              max={50_000}
+              max={50000}
               step={1000}
             />
           </Grid>
@@ -169,7 +188,9 @@ const Home: React.FC = () => {
               <InputLabel>Order</InputLabel>
               <Select
                 value={filters.sortOrder}
-                onChange={(e) => handleFilterChange("sortOrder", e.target.value as "asc" | "desc")}
+                onChange={(e) =>
+                  handleFilterChange("sortOrder", e.target.value as "asc" | "desc")
+                }
               >
                 <MenuItem value="asc">Ascending</MenuItem>
                 <MenuItem value="desc">Descending</MenuItem>
@@ -178,14 +199,14 @@ const Home: React.FC = () => {
           </Grid>
           <Grid>
             <Stack direction="row" spacing={2} justifyContent="flex-end">
-              <CustomButton onClick={(e) => handleReset(e)}>Reset</CustomButton>
-              <CustomButton onClick={(e) => handleSearch(e)}>
-                Apply Filters
-              </CustomButton>
+              <CustomButton onClick={handleReset}>Reset</CustomButton>
+              <CustomButton onClick={handleSearch}>Apply Filters</CustomButton>
             </Stack>
           </Grid>
         </Grid>
-      </Paper>
+      </Collapse>
+    </Paper>
+
 
       {/* Create Job Button */}
       <Box sx={{ display: 'flex', justifyContent: 'center', mt: 4, mb: 2 }}>
