@@ -15,7 +15,7 @@ export class JobService {
   async getAllJobs(filter: JobFilterInput): Promise<Job[]> {
 
     try {
-      const jobs = await jobRepository.findByFilter(filter);
+      const jobs: Job[] = await jobRepository.findByFilter(filter);
       const favorites = await favoriteService.getAllFavorites();
 
       const favoriteMap = new Map<number, number>();
@@ -23,7 +23,7 @@ export class JobService {
         favoriteMap.set(Number(fav.jobId), Number(fav.id));
       });
 
-      return jobs.map(job => ({
+      return jobs.map(job=> ({
         ...job,
         isFavorite: favoriteMap.has(job.id),
         favoriteId: favoriteMap.get(job.id) || null
@@ -35,7 +35,7 @@ export class JobService {
     }
   }
 
-  async getJobById(id: number){
+  async getJobById(id: number): Promise<Job>{
     try {
       const job = await jobRepository.findOneBy({ id });
       if (!job) throw new Error(errorMessages.JOB_NOT_FOUND);
