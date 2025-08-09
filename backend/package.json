@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --exec npx ts-node app.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev_prod": "cross-env NODE_ENV=development node ./dist/server.js",
+    "devback_prod": "cross-env NODE_ENV=devback node ./dist/server.js",
+    "prod": "cross-env NODE_ENV=production node ./dist/server.js",
+    "build": "tsc -p . && tsc-alias -p tsconfig.json",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:generate": "npm run typeorm -- migration:generate ./src/migrations/AutoMigration -d ./src/config/db.ts",
     "migration:run": "npm run typeorm -- migration:run -d ./src/config/db.ts",
