@@ -7,9 +7,9 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-    "migration:generate": "npm run typeorm -- migration:generate ./src/migrations/AutoMigration -d ./src/config/db.ts",
-    "migration:run": "npm run typeorm -- migration:run -d ./src/config/db.ts",
-    "migration:revert": "npm run typeorm -- migration:revert -d ./src/config/db.ts"
+    "migrate:make": "knex --knexfile knexfile.ts migrate:make --esm",
+    "migrate:latest": "knex --knexfile knexfile.ts migrate:latest --esm",
+    "migrate:rollback": "knex --knexfile knexfile.ts migrate:rollback --esm"
   },
   "keywords": [],
   "author": "",
@@ -23,17 +23,17 @@
     "graphql": "^16.11.0",
     "graphql-tag": "^2.12.6",
     "helmet": "^8.0.0",
+    "knex": "^3.1.0",
     "pg": "^8.16.3",
-    "reflect-metadata": "^0.2.2",
     "tslib": "^2.8.1",
-    "typeorm": "^0.3.25",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.3",
     "@types/jest": "^29.5.14",
-    "@types/node": "^22.10.3",
+    "@types/knex": "^0.15.2",
+    "@types/node": "^22.17.1",
     "@typescript-eslint/eslint-plugin": "^8.19.0",
     "@typescript-eslint/parser": "^8.19.0",
     "eslint": "^9.17.0",
@@ -41,7 +41,7 @@
     "nodemon": "^3.1.9",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.2"
+    "typescript": "^5.8.3"
   },
   "description": ""
 }
