@@ -14,7 +14,6 @@ import {
   MenuItem,
   Select,
   Slider,
-  Button,
   Stack,
   Paper,
   Typography,
@@ -38,7 +37,6 @@ const Home: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(filterInitialState);
   const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleClose } = useSnackbar();
-
   const { data, loading: searchLoading, error, refetch } = useQuery<{ getJobs: Job[] }>(GET_JOBS, {
     variables: { filter: filterInitialState },
     fetchPolicy: "no-cache"
@@ -60,8 +58,6 @@ const Home: React.FC = () => {
       },
     });
   };
-
-  console.log("DATA: ", data);
 
   const handleFilterChange = (field: keyof FilterState, value: any) => {
     setFilters(prev => ({ ...prev, [field]: value }));
