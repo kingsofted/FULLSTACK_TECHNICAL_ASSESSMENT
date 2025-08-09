@@ -54,30 +54,21 @@ This project is a full-stack job board application designed to manage and search
 
 ---
 
-### 2. **GraphQL Schema Design**
-
-- The schema is designed to clearly separate **queries** and **mutations** with explicit inputs and outputs.  
-- Use of input types (`JobFilterInput`, `CreateJobInput`, `UpdateJobInput`) enforces structured data and simplifies frontend-backend contract.  
-- Optional fields in updates enable partial updates without requiring the full job object.  
-- Using string-based `experienceLevel` allows flexibility but might be enhanced later with enums for stronger validation.
-
----
-
-### 3. **Service Layer Abstraction**
+### 2. **Service Layer Abstraction**
 
 - The resolvers delegate business logic to a dedicated `jobService`, promoting single responsibility and testability.  
 - Error handling is centralized in resolvers to catch and re-throw errors with meaningful messages to clients.  
 
 --- 
 
-### 4. **State Management**
+### 3. **State Management**
 
 - Redux stores filter state to enable consistent and reactive UI behavior across components (e.g., filter inputs, job lists).  
 - This decision helps maintain a single source of truth for filters, making the filtering logic reusable and debuggable.
 
 ---
 
-### 5. **Filtering & Searching**
+### 4. **Filtering & Searching**
 
 - The filtering input supports multiple fields and types (strings, arrays, ranges), enabling versatile job searches.  
 - Search leverages Elasticsearch to deliver fuzzy and full-text search capabilities.  
@@ -85,7 +76,7 @@ This project is a full-stack job board application designed to manage and search
 
 ---
 
-### 6. **Database Migrations**
+### 5. **Database Migrations**
 
 - TypeORM migrations are used to evolve the database schema safely over time.  
 - The migration example dropping a constraint and setting `NOT NULL` on `experience_level` reflects iterative schema design adapting to new requirements.  
@@ -115,12 +106,7 @@ This project is a full-stack job board application designed to manage and search
 | **Type**   | **Operation**           | **Description**                            | **Input**                                                                                      | **Example Response**                                                                                                                                                  |
 |------------|-------------------------|--------------------------------------------|------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Query**  | `getJobs(filter: JobFilterInput!)` | Fetch all jobs matching filter criteria.  | ```graphql { query: "engineer", location: "NY", experienceLevel: "Mid-Level" } ```              | ```json [ { "id": "1", "title": "Software Engineer", "company": "ABC Corp", "location": "NY", "experienceLevel": "Mid-Level", "salaryRange": 85000, "industry": "Tech" } ] ``` |
-| **Query**  | `getJobById(id: ID!)`    | Fetch a job by its unique ID.               | ```graphql { id: "1" } ```                                                                      | ```json { "id": "1", "title": "Software Engineer", "company": "ABC Corp", "location": "NY", "experienceLevel": "Mid-Level", "salaryRange": 85000, "industry": "Tech" } ```    |
-| **Query**  | `searchJobs(query: String!)` | Full-text search jobs matching query text.| ```graphql { query: "frontend developer" } ```                                                | ```json [ { "id": "2", "title": "Frontend Developer", "company": "XYZ Inc", "location": "Remote", "experienceLevel": "Entry-Level" } ] ```                               |
-| **Query**  | `getSimilarJobs(jobId: ID!)` | Fetch jobs similar to the job with jobId. | ```graphql { jobId: "1" } ```                                                                  | ```json [ { "id": "3", "title": "Backend Engineer", "company": "ABC Corp", "location": "NY", "experienceLevel": "Mid-Level" } ] ```                                       |
-| **Mutation** | `createJob(input: CreateJobInput!)` | Create a new job entry.                    | ```graphql { input: { title: "DevOps Engineer", company: "NewCo", location: "SF", experienceLevel: "Senior-Level" } } ``` | ```json { "id": "4", "title": "DevOps Engineer", "company": "NewCo", "location": "SF", "experienceLevel": "Senior-Level" } ```                                          |
-| **Mutation** | `updateJob(id: ID!, input: UpdateJobInput!)` | Update an existing job by ID.             | ```graphql { id: "4", input: { salaryRange: 120000 } } ```                                     | ```json { "id": "4", "title": "DevOps Engineer", "company": "NewCo", "location": "SF", "experienceLevel": "Senior-Level", "salaryRange": 120000 } ```                    |
-| **Mutation** | `deleteJob(id: ID!)`    | Delete a job by its ID.                     | ```graphql { id: "4" } ```                                                                     | ```json { "data": true } // Indicates successful deletion ```                      
+| **Mutation** | `createJob(input: CreateJobInput!)` | Create a new job entry.                    | ```graphql { input: { title: "DevOps Engineer", company: "NewCo", location: "SF", experienceLevel: "Senior-Level" } } ``` | ```json { "id": "4", "title": "DevOps Engineer", "company": "NewCo", "location": "SF", "experienceLevel": "Senior-Level" } ```                                     
 
 ## Future Enhancements
 
