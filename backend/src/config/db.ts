@@ -8,6 +8,8 @@ import { Favorite } from "../entities/Favorite";
 dotenv.config();
 
 
+const isCompiled = __filename.endsWith(".js");
+
 export const AppDataSource = new DataSource({
   type: "postgres",
   host: process.env.DB_HOST,
@@ -15,12 +17,15 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  synchronize: false, // use migrations instead
+  synchronize: false,
   logging: true,
   entities: [Job, Favorite],
-  migrations: ["src/migrations/**/*.ts"],
+  migrations: [
+    isCompiled ? "dist/migrations/**/*.js" : "src/migrations/**/*.ts"
+  ],
   ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
 });
+
 
 (async () => {
   try {
