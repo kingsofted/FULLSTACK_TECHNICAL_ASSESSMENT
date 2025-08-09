@@ -3,11 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev_prod": "cross-env NODE_ENV=development node ./dist/server.js",
-    "devback_prod": "cross-env NODE_ENV=devback node ./dist/server.js",
-    "prod": "cross-env NODE_ENV=production node ./dist/server.js",
-    "build": "tsc -p . && tsc-alias -p tsconfig.json",
-    "typeorm": "typeorm-ts-node-commonjs",
+    "dev": "nodemon --watch src --ext ts,json --exec ts-node src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migration:generate": "npm run typeorm -- migration:generate ./src/migrations/AutoMigration -d ./src/config/db.ts",
     "migration:run": "npm run typeorm -- migration:run -d ./src/config/db.ts",
     "migration:revert": "npm run typeorm -- migration:revert -d ./src/config/db.ts"
