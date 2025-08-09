@@ -9,6 +9,8 @@ interface CustomButtonProps {
   sx?: SxProps<Theme>;
   size?: "small" | "medium" | "large";
   disabled?: boolean;
+  gradient?: string;
+  hoverGradient?: string; 
 }
 
 const CustomButton: React.FC<CustomButtonProps> = ({
@@ -18,16 +20,18 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   sx,
   size = "small",
   disabled = false,
+  gradient = "linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)",
+  hoverGradient = "linear-gradient(45deg, #1565c0 30%, #1e88e5 90%)",
 }) => {
   const commonStyles: SxProps<Theme> = {
     borderRadius: 50,
-    background: "linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)",
+    background: gradient,
     textTransform: "none",
     fontWeight: "bold",
     px: 4,
     py: 1.2,
     "&:hover": {
-      background: "linear-gradient(45deg, #1565c0 30%, #1e88e5 90%)",
+      background: hoverGradient,
     },
     ...((sx as object) || {}),
   };

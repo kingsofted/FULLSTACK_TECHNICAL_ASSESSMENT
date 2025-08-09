@@ -1,28 +1,50 @@
 import { Favorite } from "../../entities/Favorite";
+import { errorMessages } from "../../error/errorMessage";
+import { addFavoriteResponse } from "../../graphql/resolvers/job/favorite.resolver";
 import { jobService } from "../job/job.service";
 import { favoriteRepository } from "./favorite.repository";
 
 export const favoriteService = {
-  async getAllFavorites() {
-    return favoriteRepository.findAllWithJobs();
+  async getAllFavorites(): Promise<Favorite[]> {
+    try {
+      const test = await favoriteRepository.findAllWithJobs();    
+
+      return favoriteRepository.findAllWithJobs();    
+    } catch (error) {
+      throw new Error(errorMessages.FAILED_TO_GET_FAVORITE);
+    }
   },
 
-  async addFavorite(jobId: number): Promise<Favorite> {
+  async addFavorite(jobId: number): Promise<addFavoriteResponse> {
+    try {
+      const job = await jobService.getJobById(jobId);
+  
+      if (!job) throw new Error("Job not found");
+  
+      //Prevent duplicate favorites for the same job
+      const existing = await favoriteRepository.findOne({ where: { jobId },relations:['job'] });
+      if (existing) return existing;
+  
+      const response: addFavoriteResponse = {
+        id: jobId,
+        job: job
+      }
+      await favoriteRepository.addFavorite(jobId);
 
-    const job = await jobService.getJobById(jobId);
-
-    if (!job) throw new Error("Job not found");
-
-    //Prevent duplicate favorites for the same job
-    const existing = await favoriteRepository.findOne({ where: { jobId },relations:['job'] });
-    console.log("ES: ", existing);
-    if (existing) return existing;
-
-    return favoriteRepository.addFavorite(jobId);
+      return response;
+      
+    } catch (error) {
+      throw new Error(errorMessages.FAILED_TO_ADD_FAVORITE)
+    }
   },
 
-  async removeFavorite(id: number) {
-    const result = await favoriteRepository.removeById(id);
-    return result.affected !== 0;
+  async removeFavorite(id: number): Promise<Boolean>{
+    try {
+      const result = await favoriteRepository.removeById(id);
+      return result.affected !== 0;
+      
+    } catch (error) {
+      throw new Error(errorMessages.FAILED_TO_REMOVE_FAVORITE);
+    }
   },
 };

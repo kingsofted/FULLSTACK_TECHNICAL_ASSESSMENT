@@ -26,4 +26,7 @@ export const errorMessages = {
   JOB_INDEX_CREATION_FAILED: "Failed to create job index in Elasticsearch",
   JOB_INDEX_NOT_FOUND: "Job index not found in Elasticsearch",
   MUST_BE_NUMBER: "Salary must be a number or empty",
+  FAILED_TO_GET_FAVORITE: "Failed to get favorite job",
+  FAILED_TO_ADD_FAVORITE: "Failed to add favorite job",
+  FAILED_TO_REMOVE_FAVORITE: "Failed to remove favorite job",
 };

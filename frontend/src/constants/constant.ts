@@ -17,5 +17,7 @@ export const experienceLevels: Job["experienceLevel"][] = [
 ];
 
 export const MESSAGE = {
-    ADDED_SUCCESSFULLY: "Added successfully"
+    ADDED_SUCCESSFULLY: "Added successfully",
+    RESET_SUCCESSFULLY: "Reset successfully",
+    SEARCH_SUCCESSFULLY: "Search successfully",
 }

@@ -8,6 +8,7 @@ import ViewJob from './pages/ViewJob/ViewJob';
 import CreateJob from './pages/CreateJob/CreateJob';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import Favorite from './pages/Favorite/Favorite';
 
 function App() {
   return (
@@ -31,6 +32,12 @@ function App() {
               path="/view-job/:jobId"
               element={
                 <ViewJob />
+              }
+            />
+            <Route
+              path='/favorite'
+              element = {
+                <Favorite />
               }
             />
             <Route path="/" element={<Home />} />

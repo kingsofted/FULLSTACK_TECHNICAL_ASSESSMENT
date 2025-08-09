@@ -3,6 +3,7 @@ import { Job } from "../../entities/Job";
 import { errorMessages } from "../../error/errorMessage";
 import { jobElasticService, JobElasticService } from "../../utils/elasticSearch/job.elasticSearch";
 import { EventListener } from "../../utils/events/EventListener";
+import { errorResponse, ResponseBase, successResponse } from "../../utils/response/ResponseBase";
 import { createJobSchema } from "../../validations/validateModel";
 import { jobRepository } from "./job.repository";
 import { CreateJobInput, JobFilterInput, UpdateJobInput } from "./job.types";
@@ -22,22 +23,31 @@ export class JobService {
     return job;
   }
 
-  async createJob(input: CreateJobInput): Promise<Job> {
+  async createJob(input: CreateJobInput): Promise<ResponseBase<Job | null>> {
 
-    const validatedData = createJobSchema.parse(input);
+    let newJob: Job | null = null;
 
-    const job = jobRepository.create({
-      title: validatedData.title,
-      company: validatedData.company,
-      location: validatedData.location,
-      experienceLevel: validatedData.experienceLevel,
-      salaryRange: validatedData.salaryRange,
-      industry: validatedData.industry,
-      requiredSkills: validatedData.requiredSkills,
-      details: validatedData.details,
-    });
+    try {
+      const validatedData = createJobSchema.parse(input);
 
-    const newJob = await jobRepository.save(job);
+      const job = jobRepository.create({
+        title: validatedData.title,
+        company: validatedData.company,
+        location: validatedData.location,
+        experienceLevel: validatedData.experienceLevel,
+        salaryRange: validatedData.salaryRange,
+        industry: validatedData.industry,
+        requiredSkills: validatedData.requiredSkills,
+        details: validatedData.details,
+      });
+      newJob = await jobRepository.save(job);
+    } catch (error: any) {
+      if (error.errors) {
+        const message = error.errors.map((e: any) => e.message).join(", ");
+        throw new Error(message);
+      }
+      throw new Error(error.message || String(error));
+    }
 
     try {
       // Save to elasticsearch asynchronously
@@ -45,11 +55,11 @@ export class JobService {
         event: JOB_EVENTS.JOB_CREATED,
         data: newJob,
       });
-    } catch (error) {
-      console.error(`Failed to dispatch job to Elasticsearch`, error);
+    } catch (error: any) {
+      throw Error(error.message)
     }
 
-    return newJob;
+    return successResponse(newJob, "Job created successfully");
   }
 
   async deleteJob(id: number): Promise<Job> {
@@ -67,38 +77,49 @@ export class JobService {
     return jobRepository.remove(job);
   }
 
-  async updateJob(id: number, input: Partial<UpdateJobInput>): Promise<Job> {
-    const job = await this.getJobById(id);
+ async updateJob(id: number, input: Partial<UpdateJobInput>): Promise<Job | null> {
 
-    const updatedData = {
-      ...job,
-      ...input,
-    };
-
-    const validatedData = createJobSchema.parse(updatedData);
-
-    job.title = validatedData.title;
-    job.company = validatedData.company;
-    job.location = validatedData.location;
-    job.experienceLevel = validatedData.experienceLevel;
-    job.salaryRange = validatedData.salaryRange;
-    job.industry = validatedData.industry;
-    job.requiredSkills = validatedData.requiredSkills;
-    job.details = validatedData.details;
-
-
+    let job: Job | null;
     try {
-      // Update elasticSearch asynchronously
-      EventListener.getInstance().notify({
-        event: JOB_EVENTS.JOB_UPDATED,
-        data: job,
-      });
-    } catch (error) {
-      console.error(`Failed to dispatch job to Elasticsearch`, error);
-    }
+      job = await this.getJobById(id);
+      const updatedData = {
+        ...job,
+        ...input,
+      };
 
-    return jobRepository.save(job);
+      const validatedData = createJobSchema.parse(updatedData);
+
+      job.title = validatedData.title;
+      job.company = validatedData.company;
+      job.location = validatedData.location;
+      job.experienceLevel = validatedData.experienceLevel;
+      job.salaryRange = validatedData.salaryRange;
+      job.industry = validatedData.industry;
+      job.requiredSkills = validatedData.requiredSkills;
+      job.details = validatedData.details;
+
+
+      try {
+        // Update elasticSearch asynchronously
+        EventListener.getInstance().notify({
+          event: JOB_EVENTS.JOB_UPDATED,
+          data: job,
+        });
+      } catch (error) {
+        console.error(`Failed to dispatch job to Elasticsearch`, error);
+      }
+
+      return jobRepository.save(job);
+
+    } catch (error: any) {
+      if (error.errors) {
+        const message = error.errors.map((e: any) => e.message).join(", ");
+        throw new Error(message);
+      }
+      throw new Error(error.message || String(error));
+    }
   }
+
 
   // ElasticSearch related methods
   async searchJobs(query: string): Promise<Job[]> {

@@ -10,7 +10,7 @@ import { Box, Container, Typography, Stack, Paper, Divider, Snackbar, Alert } fr
 import CustomButton from '../../components/common/Button/CustomButton';
 import SmallJobCard from '../../components/JobCard/SmallJobCard';
 import { ADD_FAVORITE } from '../../api/favorite.api';
-import { SnackbarSeverity, useSnackbar } from '../../utils/functions';
+import { SnackbarSeverity, useSnackbar } from '../../utils/Snackbar';
 import { MESSAGE } from '../../constants/constant';
 
 

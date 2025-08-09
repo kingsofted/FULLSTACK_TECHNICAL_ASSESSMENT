@@ -1,5 +1,6 @@
 import React from 'react';
-import { Card, CardContent, Typography } from '@mui/material';
+import { Card, CardContent, Typography, IconButton, CardActions, Box } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../utils/DateFormatter';
 
@@ -13,14 +14,23 @@ interface JobCardProps {
     industry?: string;
     requiredSkills?: string;
     updatedAt?: string;
+    favoriteId?: string; // Added for favorites page
   };
+  onRemoveFavorite?: (favoriteId: string) => void; // Optional delete handler
 }
 
-const SmallJobCard: React.FC<JobCardProps> = ({ job }) => {
+const SmallJobCard: React.FC<JobCardProps> = ({ job, onRemoveFavorite }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
     navigate(`/view-job/${job.id}`);
+  };
+
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card navigation
+    if (onRemoveFavorite && job.favoriteId) {
+      onRemoveFavorite(job.favoriteId);
+    }
   };
 
   return (
@@ -54,23 +64,30 @@ const SmallJobCard: React.FC<JobCardProps> = ({ job }) => {
           ${job.salaryRange || 'Not specified'}
         </Typography>
 
-        <Typography variant="body2" gutterBottom sx={{mt: 1}}>
+        <Typography variant="body2" gutterBottom sx={{ mt: 1 }}>
           <strong>Industry:</strong> <br />
           {job.industry || 'Not specified'}
         </Typography>
 
-        <Typography variant="body2" gutterBottom sx={{mt: 2}}>
+        <Typography variant="body2" gutterBottom sx={{ mt: 2 }}>
           <strong>Required Skills:</strong> <br />
           {job.requiredSkills || 'General'}
         </Typography>
 
-        <Typography variant="body2" color="text.secondary" sx={{mt: 2}}>
-          <strong>Last Updated:</strong>{' '}<br />
-          {job.updatedAt
-            ? formatDate(job.updatedAt)
-            : 'Undefined'}
+        <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
+          <strong>Last Updated:</strong> <br />
+          {job.updatedAt ? formatDate(job.updatedAt) : 'Undefined'}
         </Typography>
       </CardContent>
+
+      {/* Show delete button only if handler exists */}
+      {onRemoveFavorite && job.favoriteId && (
+        <CardActions sx={{ justifyContent: 'flex-end', pt: 0 }}>
+          <IconButton color="error" onClick={handleDeleteClick}>
+            <DeleteIcon />
+          </IconButton>
+        </CardActions>
+      )}
     </Card>
   );
 };

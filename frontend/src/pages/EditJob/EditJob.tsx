@@ -13,16 +13,19 @@ import {
     Stack,
     Paper,
     MenuItem,
+    Snackbar,
+    Alert,
 } from '@mui/material';
 import CustomButton from '../../components/common/Button/CustomButton';
-import { experienceLevels } from '../../constants/constant';
+import { experienceLevels, MESSAGE } from '../../constants/constant';
+import { SnackbarSeverity, useSnackbar } from '../../utils/Snackbar';
 
 const EditJob: React.FC = () => {
 
     const navigate = useNavigate();
     const { jobId } = useParams<{ jobId: string }>();
     const [job, setJob] = useState<Job>(jobInitialState);
-    const [errorMessage, setErrorMessage] = useState<string>("");
+    const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleClose } = useSnackbar();
 
     const { data: jobData, loading: jobLoading, error: jobError } = useQuery(GET_JOB, {
         variables: { id: jobId ?? '' },
@@ -32,18 +35,14 @@ const EditJob: React.FC = () => {
     const [updateJob, { data: updateData, loading: updating, error: updateError }] = useMutation(UPDATE_JOB);
 
     useEffect(() => {
-        if (jobData?.getJobById) {
-            setJob(jobData.getJobById);
-        }
-        if (jobError) {
-            console.error('GraphQL Error:', jobError);
-        }
-    }, [jobData, jobError]);
+        setJob(jobData?.getJobById);
+    }, [jobData])
 
-    useEffect(() => {
-        if (jobError) setErrorMessage(jobError.message);
-        else if (updateError) setErrorMessage(updateError.message);
-    }, [jobError, updateError]);
+
+    if (jobError) {
+        showSnackbar(jobError.message, SnackbarSeverity.ERROR);
+    }
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -53,7 +52,7 @@ const EditJob: React.FC = () => {
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await updateJob({
+            const { data } = await updateJob({
                 variables: {
                     id: jobId,
                     input: {
@@ -61,32 +60,46 @@ const EditJob: React.FC = () => {
                         company: job.company,
                         location: job.location,
                         experienceLevel: job.experienceLevel,
-                        salaryRange: job.salaryRange,
+                        salaryRange: Number(job.salaryRange),
                         industry: job.industry,
                         requiredSkills: job.requiredSkills,
                         details: job.details,
                     },
                 },
             });
+            showSnackbar(
+                MESSAGE.ADDED_SUCCESSFULLY,
+                SnackbarSeverity.SUCCESS,
+            );
+
+            // If we got here, mutation succeeded → navigate
             navigate(`/view-job/${jobId}`);
-        } catch (err) {
-            console.error('Error updating job:', err);
+        } catch (err: any) {
+            showSnackbar(err.message, SnackbarSeverity.ERROR);
         }
     };
 
     return (
         <>
-            {(jobLoading || updating || errorMessage) && (
+            <Header />
+            {(jobLoading || updating) && (
                 <LoadingScreen
                     loading={jobLoading || updating}
                     error={jobError?.message || updateError?.message}
-                    onErrorConfirm={() => {
-                        setErrorMessage("");
-                    }}
                 />
             )}
 
-            <Header />
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
             <Container maxWidth="md" sx={{ mt: 4 }}>
                 <Paper sx={{ p: 4, borderRadius: 3, boxShadow: 4 }}>
                     <Typography variant="h4" mb={3} fontWeight="bold">

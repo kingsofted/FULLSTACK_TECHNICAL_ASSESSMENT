@@ -18,7 +18,7 @@ import {
     Alert,
 } from '@mui/material';
 import { experienceLevels, MESSAGE } from '../../constants/constant';
-import { SnackbarSeverity, useSnackbar } from '../../utils/functions';
+import { SnackbarSeverity, useSnackbar } from '../../utils/Snackbar';
 
 const CreateJob: React.FC = () => {
     const navigate = useNavigate();

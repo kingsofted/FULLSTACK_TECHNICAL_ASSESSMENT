@@ -1,3 +1,5 @@
+import { Favorite } from "../../../entities/Favorite";
+import { Job } from "../../../entities/Job";
 import { favoriteService } from "../../../modules/favorite/favorite.service";
 
 
@@ -9,24 +11,45 @@ interface addFavoriteInput {
 
 interface removeFavoriteInput {
   input:{
-    jobId: number
+    favoriteId: number
   }
+}
+
+export interface addFavoriteResponse{
+  id: number,
+  job: Job,
 }
 
 export const favoriteResolver = {
   Query: {
-    favorites: async () => {
-      return favoriteService.getAllFavorites();
+    favorites: async (): Promise<Favorite[]> => {
+      try {
+        return await favoriteService.getAllFavorites();
+      
+      } catch (error: any) {
+        throw Error(error.message);
+      }
     },
   },
 
   Mutation: {
-    addFavorite: async (_: unknown, { input }: addFavoriteInput) => {
-      return favoriteService.addFavorite(input.jobId);
+    addFavorite: async (_: unknown, { input }: addFavoriteInput): Promise<addFavoriteResponse> => {
+      try {
+        return await favoriteService.addFavorite(input.jobId);
+        
+      } catch (error: any) {
+        throw Error(error.message);
+      }
     },
 
-    removeFavorite: async (_: unknown, { input }: removeFavoriteInput) => {
-      return favoriteService.removeFavorite(input.jobId);
+    removeFavorite: async (_: unknown, { input }: removeFavoriteInput): Promise<Boolean> => {
+      try {
+        return await favoriteService.removeFavorite(input.favoriteId);
+  
+      } catch (error:any) {
+        throw Error(error.message);
+      }
     },
   },
 };
+  

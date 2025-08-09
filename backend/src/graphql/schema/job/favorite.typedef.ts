@@ -11,7 +11,7 @@ const favoriteTypeDefs = gql`
   }
 
   input RemoveFavoriteInput {
-    jobId: ID!
+    favoriteId: ID!
   }
 
   type Query {

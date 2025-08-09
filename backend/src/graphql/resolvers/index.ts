@@ -1,3 +1,4 @@
-import { jobResolver } from "./job.resolver";
+import { favoriteResolver } from "./job/favorite.resolver";
+import { jobResolver } from "./job/job.resolver";
 
-export const resolvers = [jobResolver];
+export const resolvers = [jobResolver, favoriteResolver];

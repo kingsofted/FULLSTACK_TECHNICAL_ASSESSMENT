@@ -39,3 +39,4 @@ export const REMOVE_FAVORITE = gql`
     removeFavorite(input: $input)
   }
 `;
+
