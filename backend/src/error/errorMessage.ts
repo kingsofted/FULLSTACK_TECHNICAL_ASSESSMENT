@@ -25,4 +25,5 @@ export const errorMessages = {
   JOB_NOT_FOUND: "Job not found",
   JOB_INDEX_CREATION_FAILED: "Failed to create job index in Elasticsearch",
   JOB_INDEX_NOT_FOUND: "Job index not found in Elasticsearch",
+  MUST_BE_NUMBER: "Salary must be a number or empty",
 };

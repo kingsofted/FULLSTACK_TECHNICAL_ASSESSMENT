@@ -1,5 +1,5 @@
-import { jobService } from "../../modules/job/job.service";
-import { CreateJobInput, JobFilterInput, UpdateJobInput } from "../../modules/job/job.types";
+import { jobService } from "../../../modules/job/job.service";
+import { CreateJobInput, JobFilterInput, UpdateJobInput } from "../../../modules/job/job.types";
 
 export const jobResolver = {
   Query: {

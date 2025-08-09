@@ -15,3 +15,7 @@ export const experienceLevels: Job["experienceLevel"][] = [
     "Mid-Level",
     "Senior-Level",
 ];
+
+export const MESSAGE = {
+    ADDED_SUCCESSFULLY: "Added successfully"
+}

@@ -15,6 +15,7 @@ import {
     MenuItem,
 } from '@mui/material';
 import CustomButton from '../../components/common/Button/CustomButton';
+import { experienceLevels } from '../../constants/constant';
 
 const EditJob: React.FC = () => {
 
@@ -28,10 +29,7 @@ const EditJob: React.FC = () => {
         skip: !jobId,
     });
 
-
     const [updateJob, { data: updateData, loading: updating, error: updateError }] = useMutation(UPDATE_JOB);
-
-
 
     useEffect(() => {
         if (jobData?.getJobById) {
@@ -46,12 +44,6 @@ const EditJob: React.FC = () => {
         if (jobError) setErrorMessage(jobError.message);
         else if (updateError) setErrorMessage(updateError.message);
     }, [jobError, updateError]);
-
-    const experienceLevels: Job["experienceLevel"][] = [
-        "Entry-Level",
-        "Mid-Level",
-        "Senior-Level",
-    ];
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;

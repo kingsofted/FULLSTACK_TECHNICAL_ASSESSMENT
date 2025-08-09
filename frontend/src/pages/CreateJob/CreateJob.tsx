@@ -14,21 +14,19 @@ import {
     Stack,
     Paper,
     MenuItem,
+    Snackbar,
+    Alert,
 } from '@mui/material';
-import { experienceLevels } from '../../constants/constant';
+import { experienceLevels, MESSAGE } from '../../constants/constant';
+import { SnackbarSeverity, useSnackbar } from '../../utils/functions';
 
 const CreateJob: React.FC = () => {
     const navigate = useNavigate();
     const [job, setJob] = useState<Job>(jobInitialState);
-    const [errorMessage, setErrorMessage] = useState<string>("");
 
+    // Show snackbar
+    const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleClose } = useSnackbar();
     const [createJob, { data: createData, loading: creating, error: createError }] = useMutation(CREATE_JOB);
-
-    useEffect(() => {
-        if (createError) {
-            setErrorMessage(createError.message);
-        }
-    }, [createError]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -51,32 +49,42 @@ const CreateJob: React.FC = () => {
                         details: job.details,
                     },
                 },
-                refetchQueries: [{ query: GET_JOBS }]
+                // refetchQueries: [{ query: GET_JOBS }]
             });
 
             if (data?.createJob?.id) {
+                showSnackbar(MESSAGE.ADDED_SUCCESSFULLY, SnackbarSeverity.SUCCESS);
                 navigate(`/view-job/${data.createJob.id}`);
             } else {
                 navigate(`/`);
             }
-        } catch (err) {
-            console.error('Error creating job:', err);
+        } catch (err:any) {
+            showSnackbar(err.message, SnackbarSeverity.ERROR);
         }
     };
 
     return (
         <>
-            {(creating || errorMessage) && (
+            {(creating) && (
                 <LoadingScreen
                     loading={creating}
                     error={createError?.message}
-                    onErrorConfirm={() => {
-                        setErrorMessage("");
-                    }}
                 />
             )}
 
             <Header />
+
+            <Snackbar
+                open={snackbarOpen}
+                autoHideDuration={3000}
+                onClose={handleClose}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+            >
+                <Alert onClose={handleClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+                    {snackbarMessage}
+                </Alert>
+            </Snackbar>
+
             <Container maxWidth="md" sx={{ mt: 4 }}>
                 <Paper sx={{ p: 4, borderRadius: 3, boxShadow: 4 }}>
                     <Typography variant="h4" mb={3} fontWeight="bold">

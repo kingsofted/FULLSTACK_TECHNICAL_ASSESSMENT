@@ -2,9 +2,6 @@ import { AppDataSource } from "../../config/db";
 import { Job } from "../../entities/Job";
 import { JobFilterInput } from "./job.types";
 
-(async () => {
-  await AppDataSource.initialize();
-})();
 
 export const jobRepository = AppDataSource.getRepository(Job).extend({
 

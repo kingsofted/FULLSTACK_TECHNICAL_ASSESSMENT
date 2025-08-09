@@ -2,6 +2,7 @@
 import dotenv from "dotenv";
 import { DataSource } from "typeorm";
 import { Job } from "../entities/Job";
+import { Favorite } from "../entities/Favorite";
 
 
 dotenv.config();
@@ -16,8 +17,16 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: false, // use migrations instead
   logging: true,
-  entities: [Job],
+  entities: [Job, Favorite],
   migrations: ["src/migrations/**/*.ts"],
   ssl: process.env.DB_SSL === "true" ? { rejectUnauthorized: false } : false,
 });
 
+(async () => {
+  try {
+    await AppDataSource.initialize();
+    console.log("Data Source has been initialized!");
+  } catch (error) {
+    console.error("Error during Data Source initialization:", error);
+  }
+})();

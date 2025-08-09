@@ -6,9 +6,12 @@ import { jobInitialState } from '../../redux/initialState/jobInitialState';
 import { GET_JOB, DELETE_JOB, GET_JOBS, GET_SIMILAR_JOBS } from '../../api/job.api';
 import LoadingScreen from '../../components/common/Loading/LoadingScreen';
 import Header from '../../components/common/Header/Header';
-import { Box, Container, Typography, Stack, Paper, Divider } from '@mui/material';
+import { Box, Container, Typography, Stack, Paper, Divider, Snackbar, Alert } from '@mui/material';
 import CustomButton from '../../components/common/Button/CustomButton';
 import SmallJobCard from '../../components/JobCard/SmallJobCard';
+import { ADD_FAVORITE } from '../../api/favorite.api';
+import { SnackbarSeverity, useSnackbar } from '../../utils/functions';
+import { MESSAGE } from '../../constants/constant';
 
 
 
@@ -18,11 +21,10 @@ interface GetSimilarJobsResponse {
 
 
 const ViewJob: React.FC = () => {
-  window.scrollTo(0, 0); 
+
   const { jobId } = useParams<{ jobId: string }>();
   const navigate = useNavigate();
   const [job, setJob] = useState<Job>(jobInitialState);
-  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const { data: jobData, loading: jobLoading, error: jobError } = useQuery(GET_JOB, {
     variables: { id: jobId ?? '' },
@@ -39,15 +41,21 @@ const ViewJob: React.FC = () => {
 
   const [deleteJob, { loading: deleting }] = useMutation(DELETE_JOB);
 
+  // Add favorite mutation
+  const [addFavorite, { loading: addingFavorite }] = useMutation(ADD_FAVORITE);
+
+  // Show snackbar
+  const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleClose } = useSnackbar();
+
   useEffect(() => {
     if (jobData?.getJobById) {
       setJob(jobData.getJobById);
     }
     if (jobError) {
       console.error('GraphQL Error:', jobError);
-      setErrorMessage(jobError.message);
+      showSnackbar(jobError.message, SnackbarSeverity.ERROR);
     }
-  }, [jobData, jobError]);
+  }, [jobData, jobError, showSnackbar]);
 
   const handleDelete = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete this job?");
@@ -61,23 +69,48 @@ const ViewJob: React.FC = () => {
         },
       );
       navigate('/');
-    } catch (err) {
-      console.error('Error deleting job:', err);
+    } catch (err: any) {
+      showSnackbar(err.message, SnackbarSeverity.ERROR);
+    }
+  };
+
+  const handleAddFavorite = async () => {
+    if (!job.id) return;
+
+    try {
+      const added = await addFavorite({
+        variables: {
+          input: { jobId: job.id }
+        }
+      });
+      showSnackbar(MESSAGE.ADDED_SUCCESSFULLY, SnackbarSeverity.SUCCESS);
+    } catch (err: any) {
+      showSnackbar(err.message, SnackbarSeverity.ERROR);
     }
   };
 
 
   return (
     <>
-      {(jobLoading || deleting || errorMessage) && (
+      {(jobLoading || deleting || addingFavorite) && (
         <LoadingScreen
           loading={jobLoading || deleting}
-          error={errorMessage}
-          onErrorConfirm={() => setErrorMessage("")}
         />
       )}
 
       <Header />
+
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleClose}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={handleClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+      
       <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
         <Paper sx={{ p: 4, borderRadius: 3, boxShadow: 4 }}>
           <Typography variant="h4" mb={3} fontWeight="bold">
@@ -134,6 +167,7 @@ const ViewJob: React.FC = () => {
                 {job.updatedAt ? new Date(Number(job.updatedAt)).toLocaleString() : 'Unknown'}
               </Typography>
             </Box>
+
           </Stack>
 
           {/* Buttons */}
@@ -143,6 +177,20 @@ const ViewJob: React.FC = () => {
               sx={{ alignSelf: "flex-end", mt: 2 }}
             >
               Edit
+            </CustomButton>
+            <CustomButton
+              onClick={handleAddFavorite}
+              sx={{
+                alignSelf: "flex-end",
+                mt: 2,
+                background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+                '&:hover': {
+                  background: 'linear-gradient(45deg, #1565c0 30%, #2196f3 90%)',
+                },
+              }}
+              disabled={addingFavorite}
+            >
+              {addingFavorite ? "Adding..." : "Add to Favorites"}
             </CustomButton>
             <CustomButton
               onClick={handleDelete}
@@ -167,31 +215,30 @@ const ViewJob: React.FC = () => {
         </Paper>
       </Container>
 
-        <Box sx={{ backgroundColor: "#f5f5f5", minHeight: "100vh", py: 4 }}>
-          <Container>
-            {(similarJobLoading || similarJobError) && (
-              <LoadingScreen
-                loading={similarJobLoading}
-                error={similarJobError?.message}
-                onErrorConfirm={() => setErrorMessage("")}
-              />
+      <Box sx={{ backgroundColor: "#f5f5f5", minHeight: "100vh", py: 4 }}>
+        <Container>
+          {(similarJobLoading || similarJobError) && (
+            <LoadingScreen
+              loading={similarJobLoading}
+              error={similarJobError?.message}
+            />
+          )}
+
+          <Typography variant="h5" mb={3} fontWeight="bold">
+            Similar Jobs
+          </Typography>
+
+          <Box sx={{ p: 2 }}>
+            {similarJob?.getSimilarJobs?.length ? (
+              similarJob.getSimilarJobs.map((job) => (
+                <SmallJobCard key={job.id} job={job} />
+              ))
+            ) : (
+              <Typography color="text.secondary">No similar jobs found</Typography>
             )}
-
-            <Typography variant="h5" mb={3} fontWeight="bold">
-              Similar Jobs
-            </Typography>
-
-            <Box sx={{ p: 2 }}>
-              {similarJob?.getSimilarJobs?.length ? (
-                similarJob.getSimilarJobs.map((job) => (
-                  <SmallJobCard key={job.id} job={job} />
-                ))
-              ) : (
-                <Typography color="text.secondary">No similar jobs found</Typography>
-              )}
-            </Box>
-          </Container>
-        </Box>
+          </Box>
+        </Container>
+      </Box>
 
 
 
