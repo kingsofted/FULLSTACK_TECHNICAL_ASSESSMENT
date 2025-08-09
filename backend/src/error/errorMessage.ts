@@ -29,4 +29,5 @@ export const errorMessages = {
   FAILED_TO_GET_FAVORITE: "Failed to get favorite job",
   FAILED_TO_ADD_FAVORITE: "Failed to add favorite job",
   FAILED_TO_REMOVE_FAVORITE: "Failed to remove favorite job",
+  FAILED_TO_GET_JOBS: "Failed to get jobs",
 };

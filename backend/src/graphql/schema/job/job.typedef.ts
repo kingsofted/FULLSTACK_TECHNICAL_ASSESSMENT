@@ -12,6 +12,8 @@ type Job {
   industry: String
   requiredSkills: String
   details: String
+  isFavorite: Boolean
+  favoriteId: String
   createdAt: String! 
   updatedAt: String!
 }

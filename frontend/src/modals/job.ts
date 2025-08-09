@@ -7,6 +7,8 @@ export interface Job {
   salaryRange?: number;
   industry?: string;
   requiredSkills?: string;
+  isFavorite?: boolean;
+  favoriteId?: string;
   details?: string; 
   createdAt?: string;
   updatedAt?: string; 

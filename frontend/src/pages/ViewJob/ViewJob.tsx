@@ -9,7 +9,7 @@ import Header from '../../components/common/Header/Header';
 import { Box, Container, Typography, Stack, Paper, Divider, Snackbar, Alert } from '@mui/material';
 import CustomButton from '../../components/common/Button/CustomButton';
 import SmallJobCard from '../../components/JobCard/SmallJobCard';
-import { ADD_FAVORITE } from '../../api/favorite.api';
+import { ADD_FAVORITE, REMOVE_FAVORITE } from '../../api/favorite.api';
 import { SnackbarSeverity, useSnackbar } from '../../utils/Snackbar';
 import { MESSAGE } from '../../constants/constant';
 
@@ -41,8 +41,17 @@ const ViewJob: React.FC = () => {
 
   const [deleteJob, { loading: deleting }] = useMutation(DELETE_JOB);
 
-  // Add favorite mutation
-  const [addFavorite, { loading: addingFavorite }] = useMutation(ADD_FAVORITE);
+  // Add mutation
+  const [addFavorite, { loading: addingFavorite }] = useMutation(ADD_FAVORITE, {
+    refetchQueries: [{ query: GET_JOB, variables: { id: jobId } }],
+    awaitRefetchQueries: true
+  });
+
+  const [removeFavorite, { loading: removingFavorite }] = useMutation(REMOVE_FAVORITE, {
+    refetchQueries: [{ query: GET_JOB, variables: { id: jobId } }],
+    awaitRefetchQueries: true
+  });
+
 
   // Show snackbar
   const { snackbarOpen, snackbarMessage, snackbarSeverity, showSnackbar, handleClose } = useSnackbar();
@@ -74,16 +83,32 @@ const ViewJob: React.FC = () => {
     }
   };
 
-  const handleAddFavorite = async () => {
+  const handleToggleFavorite = async () => {
     if (!job.id) return;
 
     try {
-      const added = await addFavorite({
-        variables: {
-          input: { jobId: job.id }
-        }
-      });
-      showSnackbar(MESSAGE.ADDED_SUCCESSFULLY, SnackbarSeverity.SUCCESS);
+      if (job.isFavorite) {
+        // Remove favorite
+        await removeFavorite({
+          variables: {
+            input: { favoriteId: job.favoriteId }
+          }
+        });
+
+        setJob({ ...job, isFavorite: false, favoriteId: undefined });
+        showSnackbar(MESSAGE.REMOVED_SUCCESSFULLY, SnackbarSeverity.SUCCESS);
+      } else {
+        // Add favorite
+        const { data } = await addFavorite({
+          variables: { input: { jobId: job.id } }
+        });
+        setJob({
+          ...job,
+          isFavorite: true,
+          favoriteId: data?.addFavorite?.id
+        });
+        showSnackbar(MESSAGE.ADDED_SUCCESSFULLY, SnackbarSeverity.SUCCESS);
+      }
     } catch (err: any) {
       showSnackbar(err.message, SnackbarSeverity.ERROR);
     }
@@ -110,7 +135,7 @@ const ViewJob: React.FC = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      
+
       <Container maxWidth="md" sx={{ mt: 4, mb: 4 }}>
         <Paper sx={{ p: 4, borderRadius: 3, boxShadow: 4 }}>
           <Typography variant="h4" mb={3} fontWeight="bold">
@@ -179,19 +204,30 @@ const ViewJob: React.FC = () => {
               Edit
             </CustomButton>
             <CustomButton
-              onClick={handleAddFavorite}
+              onClick={handleToggleFavorite}
               sx={{
                 alignSelf: "flex-end",
                 mt: 2,
-                background: 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
+                background: job.isFavorite
+                  ? 'linear-gradient(45deg, #d32f2f 30%, #f44336 90%)'
+                  : 'linear-gradient(45deg, #1976d2 30%, #42a5f5 90%)',
                 '&:hover': {
-                  background: 'linear-gradient(45deg, #1565c0 30%, #2196f3 90%)',
+                  background: job.isFavorite
+                    ? 'linear-gradient(45deg, #b71c1c 30%, #e53935 90%)'
+                    : 'linear-gradient(45deg, #1565c0 30%, #2196f3 90%)',
                 },
               }}
-              disabled={addingFavorite}
+              disabled={addingFavorite || removingFavorite}
             >
-              {addingFavorite ? "Adding..." : "Add to Favorites"}
+              {addingFavorite || removingFavorite
+                ? job.isFavorite
+                  ? "Removing..."
+                  : "Adding..."
+                : job.isFavorite
+                  ? "Remove from Favorites"
+                  : "Add to Favorites"}
             </CustomButton>
+
             <CustomButton
               onClick={handleDelete}
               sx={{

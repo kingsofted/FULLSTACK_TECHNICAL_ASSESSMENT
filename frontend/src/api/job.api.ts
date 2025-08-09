@@ -13,6 +13,8 @@ export const GET_JOBS = gql`
       industry
       requiredSkills
       details
+      isFavorite
+      favoriteId
       createdAt
       updatedAt
     }
@@ -32,6 +34,8 @@ export const GET_JOB = gql`
       industry
       requiredSkills
       details
+      isFavorite
+      favoriteId
       createdAt
       updatedAt
     }

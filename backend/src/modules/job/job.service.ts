@@ -5,6 +5,7 @@ import { jobElasticService, JobElasticService } from "../../utils/elasticSearch/
 import { EventListener } from "../../utils/events/EventListener";
 import { errorResponse, ResponseBase, successResponse } from "../../utils/response/ResponseBase";
 import { createJobSchema } from "../../validations/validateModel";
+import { favoriteService } from "../favorite/favorite.service";
 import { jobRepository } from "./job.repository";
 import { CreateJobInput, JobFilterInput, UpdateJobInput } from "./job.types";
 
@@ -13,15 +14,50 @@ export class JobService {
 
   async getAllJobs(filter: JobFilterInput): Promise<Job[]> {
 
-    return jobRepository.findByFilter(filter);
+    try {
+      const jobs = await jobRepository.findByFilter(filter);
+      const favorites = await favoriteService.getAllFavorites();
+
+      const favoriteMap = new Map<number, number>();
+      favorites.forEach(fav => {
+        favoriteMap.set(Number(fav.jobId), Number(fav.id));
+      });
+
+      return jobs.map(job => ({
+        ...job,
+        isFavorite: favoriteMap.has(job.id),
+        favoriteId: favoriteMap.get(job.id) || null
+      }));
+
+
+    } catch (error) {
+      throw new Error(errorMessages.FAILED_TO_GET_JOBS);
+    }
   }
 
-  async getJobById(id: number): Promise<Job> {
-    const job = await jobRepository.findOneBy({ id });
-    if (!job) throw new Error(errorMessages.JOB_NOT_FOUND);
-
-    return job;
+  async getJobById(id: number){
+    try {
+      const job = await jobRepository.findOneBy({ id });
+      if (!job) throw new Error(errorMessages.JOB_NOT_FOUND);
+  
+      const favorites = await favoriteService.getAllFavorites();
+  
+      const favoriteMap = new Map<number, number>();
+      favorites.forEach(fav => {
+        favoriteMap.set(Number(fav.jobId), Number(fav.id));
+      });
+  
+      return {
+        ...job,
+        isFavorite: favoriteMap.has(job.id),
+        favoriteId: favoriteMap.get(job.id) || null
+      };
+      
+    } catch (error) {
+      throw new Error(errorMessages.FAILED_TO_GET_JOBS);
+    }
   }
+
 
   async createJob(input: CreateJobInput): Promise<ResponseBase<Job | null>> {
 
@@ -77,7 +113,7 @@ export class JobService {
     return jobRepository.remove(job);
   }
 
- async updateJob(id: number, input: Partial<UpdateJobInput>): Promise<Job | null> {
+  async updateJob(id: number, input: Partial<UpdateJobInput>): Promise<Job | null> {
 
     let job: Job | null;
     try {

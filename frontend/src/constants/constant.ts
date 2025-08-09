@@ -20,4 +20,5 @@ export const MESSAGE = {
     ADDED_SUCCESSFULLY: "Added successfully",
     RESET_SUCCESSFULLY: "Reset successfully",
     SEARCH_SUCCESSFULLY: "Search successfully",
+    REMOVED_SUCCESSFULLY: "Remove successfully",
 }
