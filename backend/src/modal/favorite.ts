@@ -1,14 +1,7 @@
-// types/job.ts
-export interface Job {
+import { Job } from "./job";
+
+export interface Favorite {
+  id: number;
   job_id: number;
-  job_title: string;
-  company: string;
-  location: string;
-  experience_level: string; 
-  salary_range?: number; 
-  industry?: string;      
-  required_skills?: string;
-  details?: string;
-  created_at: Date;
-  updated_at: Date;
+  job?: Job; // optional if joined
 }

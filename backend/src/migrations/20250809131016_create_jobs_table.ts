@@ -10,7 +10,7 @@ export async function up(knex: Knex): Promise<void> {
     table
       .string("experience_level", 50)
       .notNullable()
-      .index("idx_jobs_experience_level"); // values like Entry-Level, Mid-Level, etc.
+      .index("idx_jobs_experience_level"); 
     table.decimal("salary_range", 8, 2).nullable();
     table.string("industry", 100).nullable().index("idx_jobs_industry");
     table.text("required_skills").nullable();

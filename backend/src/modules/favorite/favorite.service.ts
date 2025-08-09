@@ -1,6 +1,6 @@
-import { Favorite } from "../../entities/Favorite";
 import { errorMessages } from "../../error/errorMessage";
 import { addFavoriteResponse } from "../../graphql/resolvers/job/favorite.resolver";
+import { Favorite } from "../../modal/favorite";
 import { jobService } from "../job/job.service";
 import { favoriteRepository } from "./favorite.repository";
 

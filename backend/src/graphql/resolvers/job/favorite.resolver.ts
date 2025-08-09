@@ -1,6 +1,6 @@
 
-import { Job } from "../../../modal/favorite";
-import { Favorite } from "../../../modal/job";
+import { Favorite } from "../../../modal/favorite";
+import { Job } from "../../../modal/job";
 import { favoriteService } from "../../../modules/favorite/favorite.service";
 
 

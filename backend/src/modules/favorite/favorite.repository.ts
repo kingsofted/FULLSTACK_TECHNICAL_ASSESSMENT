@@ -1,39 +1,40 @@
-// repositories/favoriteRepository.ts
-
 import { db } from "../../config/db";
-
 
 export const favoriteRepository = {
   async findAllWithJobs() {
     return db("favorites")
-      .join("jobs", "favorites.jobId", "jobs.id")
+      .join("jobs", "favorites.job_id", "jobs.job_id")
       .select(
         "favorites.*",
-        "jobs.title as jobTitle",
-        "jobs.description as jobDescription"
+        "jobs.job_title as jobTitle",
+        "jobs.details as jobDescription"
       );
   },
 
-  async findById(id: number) {
+
+  async findOne(opts: { where: { jobId: number }; relations: string[] }) {
+
+    const { jobId } = opts.where;
     return db("favorites")
-      .join("jobs", "favorites.jobId", "jobs.id")
-      .where("favorites.id", id)
+      .join("jobs", "favorites.job_id", "jobs.job_id")
+      .where("favorites.job_id", jobId)
       .select(
         "favorites.*",
-        "jobs.title as jobTitle",
-        "jobs.description as jobDescription"
+        "jobs.job_title as jobTitle",
+        "jobs.details as jobDescription"
       )
       .first();
   },
 
   async addFavorite(jobId: number) {
     const [favorite] = await db("favorites")
-      .insert({ jobId })
-      .returning("*"); // PostgreSQL supports returning
+      .insert({ job_id: jobId })
+      .returning("*");
     return favorite;
   },
 
   async removeById(id: number) {
-    return db("favorites").where({ id }).del();
-  }
+    const deletedCount = await db("favorites").where({ id }).del();
+    return { affected: deletedCount }; // match expected return shape
+  },
 };

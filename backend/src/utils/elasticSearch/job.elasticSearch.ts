@@ -1,6 +1,6 @@
 import { elasticClient } from "../../config/elasticSearch";
 import { JOB_EVENTS, JobEventPayload, JOBTYPE } from "../../constant/constant";
-import { Job } from "../../modal/favorite";
+import { Job } from "../../modal/job";
 import { searchableFields } from "../searchableField";
 
 
@@ -62,7 +62,7 @@ export class JobElasticService {
   async createJob(job: Job) {
     await elasticClient.index({
       index: this.index,
-      id: job.id.toString(),
+      id: job.job_id.toString(),
       document: job,
     });
   }
@@ -99,14 +99,14 @@ export class JobElasticService {
   async deleteJob(job: Job) {
     await elasticClient.delete({
       index: this.index,
-      id: job.id.toString(),
+      id: job.job_id.toString(),
     });
   }
 
   async updateJob(job: Job) {
     await elasticClient.update({
       index: this.index,
-      id: job.id.toString(),
+      id: job.job_id.toString(),
       doc: job,
     });
   }
@@ -115,7 +115,7 @@ export class JobElasticService {
     // Fetch the current job document
     const jobFoundElastic = await elasticClient.get({
       index: this.index,
-      id: job.id.toString(),
+      id: job.job_id.toString(),
     });
 
     const jobElastic = jobFoundElastic._source as Job;
@@ -131,7 +131,7 @@ export class JobElasticService {
           should: [
             {
               multi_match: {
-                query: jobElastic.requiredSkills || "",
+                query: jobElastic.required_skills || "",
                 fields: JOBTYPE.REQUIRED_SKILLS,
                 boost: 3,
                 fuzziness: "AUTO"
@@ -152,7 +152,7 @@ export class JobElasticService {
             }
           ],
           must_not: {
-            term: { _id: jobElastic.id }
+            term: { _id: jobElastic.job_id }
           }
         }
       },
