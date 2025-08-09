@@ -1,4 +1,5 @@
-import { Job } from "../entities/Job";
+import { Job } from "../modal/favorite";
+
 
 type JobKeys = keyof Job;
 

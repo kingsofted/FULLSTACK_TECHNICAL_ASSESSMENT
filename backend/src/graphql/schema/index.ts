@@ -1,4 +1,4 @@
-import { Job } from '../../entities/Job';
+
 import favoriteTypeDefs from './job/favorite.typedef';
 import jobTypeDefs from './job/job.typedef';
 import { gql } from "graphql-tag";

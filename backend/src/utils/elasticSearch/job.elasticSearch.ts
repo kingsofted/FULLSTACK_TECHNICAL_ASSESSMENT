@@ -1,6 +1,6 @@
 import { elasticClient } from "../../config/elasticSearch";
 import { JOB_EVENTS, JobEventPayload, JOBTYPE } from "../../constant/constant";
-import { Job } from "../../entities/Job";
+import { Job } from "../../modal/favorite";
 import { searchableFields } from "../searchableField";
 
 
