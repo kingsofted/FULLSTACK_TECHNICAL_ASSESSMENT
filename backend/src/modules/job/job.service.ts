@@ -23,7 +23,7 @@ export class JobService {
         favoriteMap.set(Number(fav.jobId), Number(fav.id));
       });
 
-      return jobs.map(job=> ({
+      return jobs.map(job => ({
         ...job,
         isFavorite: favoriteMap.has(job.id),
         favoriteId: favoriteMap.get(job.id) || null
@@ -35,28 +35,29 @@ export class JobService {
     }
   }
 
-  async getJobById(id: number): Promise<Job>{
+  async getJobById(id: number): Promise<Job & { isFavorite: boolean; favoriteId: number | null }> {
     try {
       const job = await jobRepository.findOneBy({ id });
       if (!job) throw new Error(errorMessages.JOB_NOT_FOUND);
-  
+
       const favorites = await favoriteService.getAllFavorites();
-  
+
       const favoriteMap = new Map<number, number>();
       favorites.forEach(fav => {
         favoriteMap.set(Number(fav.jobId), Number(fav.id));
       });
-  
+
       return {
         ...job,
-        isFavorite: favoriteMap.has(job.id),
-        favoriteId: favoriteMap.get(job.id) || null
+        isFavorite: favoriteMap.has(job.id),   // Use job.job_id, not job.id (depending on your DB schema)
+        favoriteId: favoriteMap.get(job.id) || null,
       };
-      
+
     } catch (error) {
       throw new Error(errorMessages.FAILED_TO_GET_JOBS);
     }
   }
+
 
 
   async createJob(input: CreateJobInput): Promise<ResponseBase<Job | null>> {
@@ -98,7 +99,7 @@ export class JobService {
     return successResponse(newJob, "Job created successfully");
   }
 
-  async deleteJob(id: number): Promise<Job> {
+  async deleteJob(id: number): Promise<any> {
     const job = await this.getJobById(id);
 
     try {
@@ -115,7 +116,7 @@ export class JobService {
 
   async updateJob(id: number, input: Partial<UpdateJobInput>): Promise<Job | null> {
 
-    let job: Job | null;
+    let job: Job;
     try {
       job = await this.getJobById(id);
       const updatedData = {
