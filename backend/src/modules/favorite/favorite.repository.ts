@@ -1,22 +1,39 @@
-import { AppDataSource } from "../../config/db";
-import { Favorite } from "../../entities/Favorite";
+// repositories/favoriteRepository.ts
+
+import { db } from "../../config/db";
 
 
-export const favoriteRepository = AppDataSource.getRepository(Favorite).extend({
+export const favoriteRepository = {
   async findAllWithJobs() {
-    return this.find({ relations: ["job"] });
+    return db("favorites")
+      .join("jobs", "favorites.jobId", "jobs.id")
+      .select(
+        "favorites.*",
+        "jobs.title as jobTitle",
+        "jobs.description as jobDescription"
+      );
   },
 
   async findById(id: number) {
-    return this.findOne({ where: { id }, relations: ["job"] });
+    return db("favorites")
+      .join("jobs", "favorites.jobId", "jobs.id")
+      .where("favorites.id", id)
+      .select(
+        "favorites.*",
+        "jobs.title as jobTitle",
+        "jobs.description as jobDescription"
+      )
+      .first();
   },
 
   async addFavorite(jobId: number) {
-    const favorite = this.create({ jobId });
-    return this.save(favorite);
+    const [favorite] = await db("favorites")
+      .insert({ jobId })
+      .returning("*"); // PostgreSQL supports returning
+    return favorite;
   },
 
   async removeById(id: number) {
-    return this.delete(id);
-  },
-});
+    return db("favorites").where({ id }).del();
+  }
+};
