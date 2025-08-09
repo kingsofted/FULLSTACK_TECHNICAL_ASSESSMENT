@@ -7,9 +7,9 @@ import express, { Express, Request, Response, NextFunction } from "express";
 import helmet from "helmet";
 import cors from "cors";
 
- 
+
 // Apollo Server setup
-const startApolloServer = async() => {
+const startApolloServer = async () => {
 
   await AppDataSource.initialize();
   console.log("DB Connected");
@@ -20,8 +20,8 @@ const startApolloServer = async() => {
     resolvers,
   });
 
-  const {url} = await startStandaloneServer(server, {
-    listen: { port: process.env.PORT ? Number(process.env.PORT) : 4000 },
+  const { url } = await startStandaloneServer(server, {
+    listen: { port: process.env.PORT ? Number(process.env.PORT) : 4000, host: '0.0.0.0' },
   });
 
   console.log(`Apollo Server ready at ${url}`);
