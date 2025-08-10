@@ -34,7 +34,7 @@ This project is a full-stack job board application designed to manage and search
 - Input validation enforced at GraphQL schema level and backend service layer
 - Pagination and sorting on job listings (via filter inputs)
 - Type-safe GraphQL queries and mutations
-
+- Asynchronous Processing with Event Listener
 ---
 
 ## Thought Process & Design Decisions
@@ -50,27 +50,27 @@ This project is a full-stack job board application designed to manage and search
   TypeORM was chosen for its seamless integration with TypeScript and built-in migration tooling, allowing incremental schema   evolution without losing data integrity.
 
 - **Elasticsearch:**  
-  To enable powerful full-text search and similarity queries, Elasticsearch was incorporated. It provides efficient indexing and querying capabilities that go beyond typical SQL text searches, enabling features like "searchJobs" and "getSimilarJobs" with relevance ranking.
+  To enable powerful full-text search and similarity queries, Elasticsearch was incorporated. 
 
 ---
 
 ### 2. **Service Layer Abstraction**
 
-- The resolvers delegate business logic to a dedicated `jobService`, promoting single responsibility and testability.  
+- The resolvers delegate business logic to a dedicated `jobService`
 - Error handling is centralized in resolvers to catch and re-throw errors with meaningful messages to clients.  
 
 --- 
 
 ### 3. **State Management**
 
-- Redux stores filter state to enable consistent and reactive UI behavior across components (e.g., filter inputs, job lists).  
-- This decision helps maintain a single source of truth for filters, making the filtering logic reusable and debuggable.
+- Redux stores filter state to enable consistent and reactive UI behavior 
+- This decision helps maintain a single source of truth for filters
 
 ---
 
 ### 4. **Filtering & Searching**
 
-- The filtering input supports multiple fields and types (strings, arrays, ranges), enabling versatile job searches.  
+- The filtering input supports multiple fields and types 
 - Search leverages Elasticsearch to deliver fuzzy and full-text search capabilities.  
 
 
@@ -79,22 +79,26 @@ This project is a full-stack job board application designed to manage and search
 ### 5. **Database Migrations**
 
 - TypeORM migrations are used to evolve the database schema safely over time.  
-- The migration example dropping a constraint and setting `NOT NULL` on `experience_level` reflects iterative schema design adapting to new requirements.  
-- Using migrations ensures consistency across environments (dev, staging, prod).
+- The migration example dropping a constraint and setting `NOT NULL` on `experience_level` reflects iterative schema design adapting to new requirements and ensure consistency.
 
 ---
 
-### 7. **Scalability & Extensibility**
+### 6. **Scalability & Extensibility**
 
 - Modular backend structure (resolvers, services, types) makes the codebase extensible for new features 
-- Clear schema definitions in GraphQL facilitate frontend evolution without backend breaking changes.
 
 ---
 
-### 9. **Security Considerations**
+### 7. **Asynchronous Processing with Event Listener**
+
+- Handle non-critical task asynchronously after the main operation succeeds to increase the processing time and decouple the core request without changing the business logic.
+
+---
+
+### 8. **Security Considerations**
 
 - Authentication and authorization are not yet implemented; this is a critical next step before production deployment.  
-- API and database layers should be hardened to avoid injection, unauthorized access, and ensure data privacy.
+
 
 ---
 
@@ -123,10 +127,4 @@ This project is a full-stack job board application designed to manage and search
 ### 6. Real-time Updates & Notifications
 - Add GraphQL subscriptions or WebSocket support for real-time job postings and updates.
 - Notify users about new jobs matching their preferences or changes in saved jobs.
-
-
-### Summary
-
-The design choices reflect a balance between **developer productivity, performanc**
-
 
