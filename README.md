@@ -121,10 +121,10 @@ This project is a full-stack job board application designed to manage and search
 ### 2. Pagination & Cursor-based Navigation
 - Add pagination support for job listings to improve performance and user experience when dealing with large datasets.
 
-### 5. Advanced Search Features
-- Improve Elasticsearch integration by adding weighted scoring, synonyms, typo tolerance, and multilingual support.
-
-### 6. Real-time Updates & Notifications
+### 3. In-memory caching layer
+- Introduce redis as a cache to improve performance and reduce load on database for frequent queries like popular jobs.
+  
+### 4. Real-time Updates & Notifications
 - Add GraphQL subscriptions or WebSocket support for real-time job postings and updates.
 - Notify users about new jobs matching their preferences or changes in saved jobs.
 
