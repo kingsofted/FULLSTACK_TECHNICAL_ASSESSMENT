@@ -74,7 +74,7 @@ export class JobElasticService {
         multi_match: {
           query,
           fields: searchableFields,
-          fuzziness: "AUTO",
+          type: "bool_prefix"
         },
       },
     });
@@ -146,7 +146,7 @@ export class JobElasticService {
               match: {
                 location: {
                   query: jobElastic.location,
-                  fuzziness: "AUTO" 
+                  fuzziness: "AUTO"
                 }
               }
             }
