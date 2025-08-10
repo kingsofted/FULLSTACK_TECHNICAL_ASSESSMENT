@@ -15,11 +15,10 @@ const Search: React.FC = () => {
   // Debounced search handler
   const debouncedSearch = useCallback(
     debounce((searchTerm: string) => {
+      // Search only if there is value
       if (searchTerm.trim()) {
         searchJobs({ variables: { query: searchTerm } });
-      } else {
-        // searchJobs({ variables: { query: "" } });
-      }
+      } 
     }, VALUE.debounceDelay),
     [searchJobs]
   );
@@ -79,7 +78,6 @@ const Search: React.FC = () => {
         </Typography>
       )}
 
-
       {data?.searchJobs?.length > 0 && (
         <Box
           display="grid"
@@ -101,9 +99,6 @@ const Search: React.FC = () => {
           ))}
         </Box>
       )}
-
-
-
     </Box>
   );
 };

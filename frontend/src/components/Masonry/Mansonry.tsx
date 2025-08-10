@@ -4,7 +4,7 @@ import { Job } from '../../modals/job';
 import SmallJobCard from '../JobCard/SmallJobCard';
 
 interface MansonryProps {
-  jobs: (Job & { favoriteId?: string })[]; // allow favoriteId for delete
+  jobs: (Job & { favoriteId?: string })[];
   onRemoveFavorite?: (favoriteId: string) => void;
 }
 

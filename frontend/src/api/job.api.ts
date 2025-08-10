@@ -108,18 +108,3 @@ export const SEARCH_JOBS = gql`
     }
   }
 `;
-// export const SEARCH_JOBS = gql`
-//   query SearchJobs($query: String!, $industry: String, $location: String, $sortBy: String, $sortOrder: String) {
-//     searchJobs(query: $query, industry: $industry, location: $location, sortBy: $sortBy, sortOrder: $sortOrder) {
-//       id
-//       title
-//       company
-//       location
-//       experienceLevel
-//       salaryRange
-//       industry
-//       requiredSkills
-//       details
-//     }
-//   }
-// `;

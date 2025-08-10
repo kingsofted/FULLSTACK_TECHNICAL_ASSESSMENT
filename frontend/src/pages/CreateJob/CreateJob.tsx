@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { Job } from '../../modals/job';
 import { jobInitialState } from '../../redux/initialState/jobInitialState';
-import { CREATE_JOB, GET_JOBS } from '../../api/job.api';
+import { CREATE_JOB } from '../../api/job.api';
 import LoadingScreen from '../../components/common/Loading/LoadingScreen';
 import Header from '../../components/common/Header/Header';
 import {
