@@ -18,7 +18,7 @@ const Search: React.FC = () => {
       if (searchTerm.trim()) {
         searchJobs({ variables: { query: searchTerm } });
       } else {
-        searchJobs({ variables: { query: "" } });
+        // searchJobs({ variables: { query: "" } });
       }
     }, VALUE.debounceDelay),
     [searchJobs]
