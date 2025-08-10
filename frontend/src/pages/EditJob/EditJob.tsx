@@ -113,6 +113,7 @@ const EditJob: React.FC = () => {
                             value={job.title}
                             onChange={handleChange}
                             fullWidth
+                            required
                         />
                         <TextField
                             label="Company"
@@ -120,6 +121,7 @@ const EditJob: React.FC = () => {
                             value={job.company}
                             onChange={handleChange}
                             fullWidth
+                            required
                         />
                         <TextField
                             label="Location"
@@ -127,6 +129,7 @@ const EditJob: React.FC = () => {
                             value={job.location}
                             onChange={handleChange}
                             fullWidth
+                            required
                         />
 
                         <TextField
@@ -149,6 +152,8 @@ const EditJob: React.FC = () => {
                             value={job.salaryRange || ''}
                             onChange={handleChange}
                             fullWidth
+                            required
+                            type='number'
                         />
                         <TextField
                             label="Industry"
@@ -156,6 +161,7 @@ const EditJob: React.FC = () => {
                             value={job.industry || ''}
                             onChange={handleChange}
                             fullWidth
+                            required
                         />
 
                         {/* Required Skills as a string */}
@@ -165,6 +171,7 @@ const EditJob: React.FC = () => {
                             value={job.requiredSkills}
                             onChange={handleChange}
                             fullWidth
+                            required
                         />
 
                         <TextField

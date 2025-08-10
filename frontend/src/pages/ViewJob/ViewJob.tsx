@@ -256,7 +256,6 @@ const ViewJob: React.FC = () => {
           {(similarJobLoading || similarJobError) && (
             <LoadingScreen
               loading={similarJobLoading}
-              error={similarJobError?.message}
             />
           )}
 

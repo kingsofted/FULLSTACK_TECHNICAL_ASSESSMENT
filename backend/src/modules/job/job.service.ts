@@ -46,7 +46,6 @@ export class JobService {
       favorites.forEach(fav => {
         favoriteMap.set(Number(fav.jobId), Number(fav.id));
       });
-
       return {
         ...job,
         isFavorite: favoriteMap.has(job.id),   // Use job.job_id, not job.id (depending on your DB schema)
@@ -60,9 +59,9 @@ export class JobService {
 
 
 
-  async createJob(input: CreateJobInput): Promise<ResponseBase<Job | null>> {
+  async createJob(input: CreateJobInput): Promise<Job> {
 
-    let newJob: Job | null = null;
+    let newJob: Job;
 
     try {
       const validatedData = createJobSchema.parse(input);
@@ -96,7 +95,7 @@ export class JobService {
       throw Error(error.message)
     }
 
-    return successResponse(newJob, "Job created successfully");
+    return newJob;
   }
 
   async deleteJob(id: number): Promise<any> {
@@ -163,9 +162,14 @@ export class JobService {
     return jobElasticService.searchJobs(query);
   }
   async getSimilarJobs(job: Job): Promise<Job[]> {
-    return jobElasticService.recommendJobs(job);
+    const jobs = await jobElasticService.recommendJobs(job);
+    return jobs;
+
   }
+
 
 }
 
 export const jobService = new JobService();
+
+
